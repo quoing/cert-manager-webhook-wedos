@@ -32,7 +32,6 @@ func main() {
 }
 
 type wedosProviderSolver struct {
-	// provider *wedos.DNSProvider
 	client *kubernetes.Clientset
 }
 
@@ -92,8 +91,8 @@ func (e *wedosProviderSolver) Present(ch *acme.ChallengeRequest) error {
 		return err
 	}
 
-	provider.Present(ch.ResolvedZone, "", ch.Key)
-	return nil
+	fmt.Println("Present", ch)
+	return provider.Present(ch.ResolvedZone, "", ch.Key)
 }
 
 func (e *wedosProviderSolver) CleanUp(ch *acme.ChallengeRequest) error {
@@ -102,8 +101,8 @@ func (e *wedosProviderSolver) CleanUp(ch *acme.ChallengeRequest) error {
 		return err
 	}
 
-	provider.CleanUp(ch.ResolvedZone, "", ch.Key)
-	return nil
+	fmt.Println("Cleanup", ch)
+	return provider.CleanUp(ch.ResolvedZone, "", ch.Key)
 }
 
 func (e *wedosProviderSolver) Initialize(kubeClientConfig *rest.Config, stopCh <-chan struct{}) error {
