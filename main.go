@@ -11,7 +11,6 @@ import (
 
 	acme "github.com/cert-manager/cert-manager/pkg/acme/webhook/apis/acme/v1alpha1"
 	"github.com/cert-manager/cert-manager/pkg/acme/webhook/cmd"
-	"github.com/go-acme/lego/v4/challenge/dns01"
 	"github.com/go-acme/lego/v4/providers/dns/wedos"
 	coreV1 "k8s.io/api/core/v1"
 	extapi "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -93,14 +92,8 @@ func (e *wedosProviderSolver) Present(ch *acme.ChallengeRequest) error {
 		return err
 	}
 
-	fqdn, value := dns01.GetRecord(strings.TrimSuffix(ch.ResolvedZone, "."), ch.Key)
-	authZone, err := dns01.FindZoneByFqdn(fqdn)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println("Present", ch, strings.TrimSuffix(ch.ResolvedZone, "."), fqdn, value, authZone)
-	return provider.Present(strings.TrimSuffix(ch.ResolvedZone, "."), "", ch.Key)
+	domainToAdd := strings.TrimPrefix(strings.TrimSuffix(ch.ResolvedFQDN, "."), "_acme-challenge.")
+	return provider.Present(domainToAdd, "", ch.Key)
 }
 
 func (e *wedosProviderSolver) CleanUp(ch *acme.ChallengeRequest) error {
@@ -109,15 +102,8 @@ func (e *wedosProviderSolver) CleanUp(ch *acme.ChallengeRequest) error {
 		return err
 	}
 
-	fqdn, value := dns01.GetRecord(strings.TrimSuffix(ch.ResolvedZone, "."), ch.Key)
-	authZone, err := dns01.FindZoneByFqdn(fqdn)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println("Cleanup", ch)
-	fmt.Println("Cleanup", ch, strings.TrimSuffix(ch.ResolvedZone, "."), fqdn, value, authZone)
-	return provider.CleanUp(strings.TrimSuffix(ch.ResolvedZone, "."), "", ch.Key)
+	domainToAdd := strings.TrimPrefix(strings.TrimSuffix(ch.ResolvedFQDN, "."), "_acme-challenge.")
+	return provider.CleanUp(domainToAdd, "", ch.Key)
 }
 
 func (e *wedosProviderSolver) Initialize(kubeClientConfig *rest.Config, stopCh <-chan struct{}) error {
