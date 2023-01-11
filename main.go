@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"blob.team/cert-manager-webhook-wedos/wedos"
@@ -93,7 +92,7 @@ func (e *wedosProviderSolver) Present(ch *acme.ChallengeRequest) error {
 		return err
 	}
 
-	return provider.Present(strings.TrimSuffix(ch.ResolvedFQDN, "."), "", ch.Key)
+	return provider.Present(ch.ResolvedFQDN, "", ch.Key)
 }
 
 func (e *wedosProviderSolver) CleanUp(ch *acme.ChallengeRequest) error {
@@ -102,7 +101,7 @@ func (e *wedosProviderSolver) CleanUp(ch *acme.ChallengeRequest) error {
 		return err
 	}
 
-	return provider.CleanUp(strings.TrimSuffix(ch.ResolvedFQDN, "."), "", ch.Key)
+	return provider.CleanUp(ch.ResolvedFQDN, "", ch.Key)
 }
 
 func (e *wedosProviderSolver) Initialize(kubeClientConfig *rest.Config, stopCh <-chan struct{}) error {
