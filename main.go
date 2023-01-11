@@ -9,13 +9,14 @@ import (
 	"strings"
 	"time"
 
+	"blob.team/cert-manager-webhook-wedos/wedos"
+
 	acme "github.com/cert-manager/cert-manager/pkg/acme/webhook/apis/acme/v1alpha1"
 	"github.com/cert-manager/cert-manager/pkg/acme/webhook/cmd"
-	"github.com/go-acme/lego/v4/providers/dns/wedos"
+
 	coreV1 "k8s.io/api/core/v1"
 	extapi "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 )
@@ -92,8 +93,7 @@ func (e *wedosProviderSolver) Present(ch *acme.ChallengeRequest) error {
 		return err
 	}
 
-	domainToAdd := strings.TrimPrefix(strings.TrimSuffix(ch.ResolvedFQDN, "."), "_acme-challenge.")
-	return provider.Present(domainToAdd, "", ch.Key)
+	return provider.Present(strings.TrimSuffix(ch.ResolvedFQDN, "."), "", ch.Key)
 }
 
 func (e *wedosProviderSolver) CleanUp(ch *acme.ChallengeRequest) error {
@@ -102,8 +102,7 @@ func (e *wedosProviderSolver) CleanUp(ch *acme.ChallengeRequest) error {
 		return err
 	}
 
-	domainToAdd := strings.TrimPrefix(strings.TrimSuffix(ch.ResolvedFQDN, "."), "_acme-challenge.")
-	return provider.CleanUp(domainToAdd, "", ch.Key)
+	return provider.CleanUp(strings.TrimSuffix(ch.ResolvedFQDN, "."), "", ch.Key)
 }
 
 func (e *wedosProviderSolver) Initialize(kubeClientConfig *rest.Config, stopCh <-chan struct{}) error {
