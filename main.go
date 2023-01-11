@@ -98,7 +98,7 @@ func (e *wedosProviderSolver) Present(ch *acme.ChallengeRequest) error {
 		return err
 	}
 
-	fmt.Println("Present", ch, ch.ResolvedZone, fqdn, authZone)
+	fmt.Println("Present", ch, ch.ResolvedZone, fqdn, value, authZone)
 	return provider.Present(ch.ResolvedZone, "", ch.Key)
 }
 
@@ -115,7 +115,7 @@ func (e *wedosProviderSolver) CleanUp(ch *acme.ChallengeRequest) error {
 	}
 
 	fmt.Println("Cleanup", ch)
-	fmt.Println("Cleanup", ch, ch.ResolvedZone, fqdn, authZone)
+	fmt.Println("Cleanup", ch, ch.ResolvedZone, fqdn, value, authZone)
 	return provider.CleanUp(ch.ResolvedZone, "", ch.Key)
 }
 
